@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FIO Official | Ultimate Premium Injector</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #000000;
+            --secondary: #ffffff;
+            --accent: #0072ff;
+            --accent-grad: linear-gradient(135deg, #0072ff 0%, #00c6ff 100%);
+            --accent-glow: rgba(0, 114, 255, 0.4);
+            --text-main: #1a1a1a;
+            --text-muted: #666;
+            --bg-light: #f8f9fa;
+            --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        html { scroll-behavior: smooth; }
+        body { background: var(--secondary); color: var(--text-main); line-height: 1.6; overflow-x: hidden; }
+
+        /* --- Fullscreen Premium Overlay --- */
+        #fullscreen-overlay {
+            position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(15px); z-index: 10000;
+            display: none; justify-content: center; align-items: center; padding: 20px;
+            transition: opacity 0.4s ease; opacity: 0;
+        }
+        #fullscreen-overlay.active { opacity: 1; }
+        #fullscreen-img {
+            max-width: 100%; max-height: 85vh; border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5); transform: scale(0.9);
+            transition: var(--transition);
+        }
+        #fullscreen-overlay.active #fullscreen-img { transform: scale(1); }
+        .close-btn { position: absolute; top: 30px; right: 30px; color: white; font-size: 2rem; cursor: pointer; transition: 0.3s; }
+        .close-btn:hover { color: var(--accent); transform: rotate(90deg); }
+        #img-spinner { position: absolute; color: white; text-align: center; }
+
+        /* --- Loader Screen --- */
+        #loader {
+            position: fixed; inset: 0; background: #fff; z-index: 9999;
+            display: flex; justify-content: center; align-items: center;
+        }
+        .spinner {
+            width: 45px; height: 45px; border: 4px solid #eee;
+            border-top: 4px solid var(--accent); border-radius: 50%;
+            animation: spin 0.8s infinite linear;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* --- Navigation --- */
+        nav {
+            position: fixed; top: 0; width: 100%; padding: 25px 8%;
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 1000; transition: var(--transition);
+        }
+        nav.scrolled {
+            background: rgba(255, 255, 255, 0.9); padding: 15px 8%;
+            backdrop-filter: blur(15px); box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+        .logo { font-size: 1.5rem; font-weight: 800; color: var(--primary); text-decoration: none; display: flex; align-items: center; gap: 10px; }
+        .logo span { color: var(--accent); }
+        .live-dot { width: 10px; height: 10px; background: #00ff88; border-radius: 50%; box-shadow: 0 0 10px #00ff88; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { opacity: 0.4; transform: scale(0.9); } 50% { opacity: 1; transform: scale(1.1); } 100% { opacity: 0.4; transform: scale(0.9); } }
+
+        .nav-links { display: flex; gap: 30px; list-style: none; }
+        .nav-links a { text-decoration: none; color: var(--primary); font-weight: 500; font-size: 0.9rem; transition: 0.3s; }
+        .nav-links a:hover { color: var(--accent); }
+
+        /* --- Hero Section --- */
+        .hero {
+            height: 100vh; display: flex; flex-direction: column; justify-content: center;
+            align-items: center; text-align: center; padding: 0 20px;
+            background: radial-gradient(circle at 50% 50%, rgba(0, 114, 255, 0.05) 0%, transparent 70%);
+        }
+        .hero h1 {
+            font-size: clamp(2.5rem, 8vw, 4.5rem); font-weight: 800; line-height: 1.1; margin-bottom: 20px;
+            background: linear-gradient(180deg, #000 30%, #444 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .hero p { font-size: 1.1rem; color: var(--text-muted); max-width: 600px; margin-bottom: 40px; }
+
+        /* --- Buttons --- */
+        .btn {
+            padding: 16px 35px; border-radius: 14px; text-decoration: none;
+            font-weight: 600; display: inline-block; transition: var(--transition); border: none; cursor: pointer;
+        }
+        .btn-primary { background: var(--accent-grad); color: white; box-shadow: 0 10px 25px var(--accent-glow); }
+        .btn-primary:hover { transform: translateY(-5px); box-shadow: 0 15px 35px var(--accent-glow); }
+        .btn-outline { background: transparent; color: var(--primary); border: 2px solid #eee; margin-left: 15px; }
+        .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+        /* --- Sections General --- */
+        .section { padding: 100px 8%; }
+        .section-header { text-align: center; margin-bottom: 60px; }
+        .section-title { font-size: 2.5rem; font-weight: 800; margin-bottom: 10px; }
+
+        /* --- Product Grid --- */
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .card {
+            background: white; padding: 50px 40px; border-radius: 30px; border: 1px solid #f0f0f0;
+            text-align: center; transition: var(--transition); position: relative;
+        }
+        .card:hover { transform: translateY(-15px); border-color: var(--accent); box-shadow: 0 30px 60px rgba(0,0,0,0.06); }
+        .card.popular { border: 2px solid var(--accent); transform: scale(1.05); z-index: 2; }
+        .price { font-size: 3rem; font-weight: 800; margin: 20px 0; letter-spacing: -2px; }
+        .price span { font-size: 1rem; color: #aaa; font-weight: 400; }
+
+        /* --- App Interface --- */
+        .interface-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .interface-item {
+            background: #fff; padding: 12px; border-radius: 25px; border: 1px solid #eee; transition: var(--transition); cursor: pointer;
+        }
+        .interface-item:hover { transform: translateY(-10px); border-color: var(--accent); }
+        
+        .img-box-vertical {
+            width: 100%;
+            aspect-ratio: 706 / 1536;
+            background: #f0f0f0;
+            border-radius: 18px;
+            overflow: hidden;
+            border: 1px solid #f0f0f0;
+        }
+        .img-box-vertical img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .interface-label { text-align: center; margin-top: 15px; font-weight: 700; font-size: 0.9rem; color: var(--primary); }
+
+        /* --- Features --- */
+        .features { background: var(--bg-light); border-radius: 60px; }
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; }
+        .feat-card { background: white; padding: 35px; border-radius: 25px; transition: 0.3s; text-align: center;}
+        .feat-card i { font-size: 2.5rem; background: var(--accent-grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 20px; }
+
+        /* --- CTA --- */
+        .cta {
+            background: var(--primary); color: white; padding: 100px 5%;
+            border-radius: 45px; margin: 0 8% 100px; text-align: center;
+            background-image: linear-gradient(45deg, rgba(0,0,0,0.95), rgba(0, 114, 255, 0.25));
+        }
+
+        footer { padding: 60px 8%; text-align: center; border-top: 1px solid #eee; color: #999; }
+
+        /* --- Animations --- */
+        [data-reveal] { opacity: 0; transform: translateY(30px); transition: 0.8s ease-out; }
+        [data-reveal].visible { opacity: 1; transform: translateY(0); }
+
+        /* --- WhatsApp Floating --- */
+        .wa-float { position: fixed; bottom: 30px; right: 30px; background: #25d366; color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 30px; box-shadow: 0 5px 15px rgba(37, 211, 102, 0.4); z-index: 999; transition: 0.3s; }
+        .wa-float:hover { transform: scale(1.1); }
+
+        @media (max-width: 992px) { .interface-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .section { padding: 80px 5%; }
+            .hero h1 { font-size: 3rem; }
+            .btn { width: 100%; margin: 5px 0; }
+            .interface-grid { grid-template-columns: 1fr; max-width: 320px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loader"><div class="spinner"></div></div>
+
+    <div id="fullscreen-overlay">
+        <div class="close-btn" onclick="closeFull()"><i class="fas fa-times"></i></div>
+        <div id="img-spinner"><div class="spinner"></div><p style="margin-top:15px; color:white;">Memuat...</p></div>
+        <img id="fullscreen-img" src="" alt="Full View">
+    </div>
+
+    <a href="https://wa.me/62895603290359" target="_blank" class="wa-float"><i class="fab fa-whatsapp"></i></a>
+
+    <nav id="navbar">
+        <a href="#" class="logo">FIO<span>OFFICIAL</span> <div class="live-dot" title="System Online"></div></a>
+        <ul class="nav-links">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#products">Pricing</a></li>
+            <li><a href="#interface">Interface</a></li>
+            <li><a href="#features">Features</a></li>
+        </ul>
+        <a href="#products" class="btn-primary" style="padding: 10px 25px; border-radius: 12px; font-size: 0.8rem; text-decoration:none;">BELI</a>
+    </nav>
+
+    <section class="hero" id="home">
+        <div style="background: rgba(0,114,255,0.1); color: var(--accent); padding: 8px 20px; border-radius: 50px; font-size: 0.8rem; font-weight: 700; margin-bottom: 20px;" data-reveal>
+            V2.0 STABLE UPDATE AVAILABLE
+        </div>
+        <h1 data-reveal>Premium Gaming<br>Injector Solution</h1>
+        <p data-reveal>Solusi cerdas untuk meningkatkan pengalaman gaming Anda dengan sistem bypass terbaru dan perlindungan keamanan maksimal.</p>
+        <div data-reveal>
+            <a href="https://wa.me/62895603290359" class="btn btn-primary">Beli Sekarang</a>
+            <a href="#interface" class="btn btn-outline">Lihat App</a>
+        </div>
+    </section>
+
+    <section class="section" id="products">
+        <div class="section-header" data-reveal>
+            <h2 class="section-title">Premium Access</h2>
+            <p>Pilih lisensi yang sesuai dengan durasi kebutuhan Anda.</p>
+        </div>
+        <div class="product-grid">
+            <div class="card" data-reveal>
+                <h3>BASIC</h3>
+                <div class="price">50<span>k</span></div>
+                <p>Akses fitur esensial.</p>
+                <a href="https://wa.me/62895603290359" class="btn btn-outline" style="width: 100%; margin-top: 25px;">Purchase</a>
+            </div>
+            <div class="card popular" data-reveal>
+                <div style="background:var(--accent-grad); color:white; font-size:0.7rem; padding:5px 15px; border-radius:20px; position:absolute; top:20px; right:20px; font-weight:800;">TERLARIS</div>
+                <h3>Extreme</h3>
+                <div class="price">150<span>k</span></div>
+                <p>Fitur lengkap + Bypass prioritas.</p>
+                <a href="https://wa.me/62895603290359" class="btn btn-primary" style="width: 100%; margin-top: 25px;">Purchase Now</a>
+            </div>
+            <div class="card" data-reveal>
+                <h3>Headtrick</h3>
+                <div class="price">100<span>k</span></div>
+                <p>Semua fitur + Update lifetime.</p>
+                <a href="https://wa.me/62895603290359" class="btn btn-outline" style="width: 100%; margin-top: 25px;">Purchase</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="interface">
+        <div class="section-header" data-reveal>
+            <h2 class="section-title">App Interface</h2>
+            <p>Klik pada gambar untuk melihat ukuran penuh</p>
+        </div>
+        <div class="interface-grid">
+            <div class="interface-item" data-reveal onclick="showFullImage('foto1.jpg')">
+                <div class="img-box-vertical">
+                    <img src="foto1.jpg" alt="FIO Preview 1">
+                </div>
+                <div class="interface-label">Home page</div>
+            </div>
+            <div class="interface-item" data-reveal onclick="showFullImage('foto2.jpg')">
+                <div class="img-box-vertical">
+                    <img src="foto2.jpg" alt="FIO Preview 2">
+                </div>
+                <div class="interface-label">Menu Fitur</div>
+            </div>
+            <div class="interface-item" data-reveal onclick="showFullImage('foto3.jpg')">
+                <div class="img-box-vertical">
+                    <img src="foto3.jpg" alt="FIO Preview 3">
+                </div>
+                <div class="interface-label">Menu fitur</div>
+            </div>
+            <div class="interface-item" data-reveal onclick="showFullImage('foto4.jpg')">
+                <div class="img-box-vertical">
+                    <img src="foto4.jpg" alt="FIO Preview 4">
+                </div>
+                <div class="interface-label">Settings page</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section features" id="features">
+        <div class="features-grid">
+            <div class="feat-card" data-reveal>
+                <i class="fas fa-shield-virus"></i>
+                <h4>Anti-Ban</h4>
+                <p>Enkripsi berlapis menjamin keamanan akun Anda.</p>
+            </div>
+            <div class="feat-card" data-reveal>
+                <i class="fas fa-bolt"></i>
+                <h4>Instant Active</h4>
+                <p>Aktifkan semua fitur hanya dalam satu klik saja.</p>
+            </div>
+            <div class="feat-card" data-reveal>
+                <i class="fas fa-sync-alt"></i>
+                <h4>Cloud Update</h4>
+                <p>Sistem akan diperbarui otomatis via server.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta" data-reveal>
+        <h2>Siap Menjadi Pemenang?</h2>
+        <p>Gunakan teknologi terbaik untuk mendominasi setiap permainan Anda.</p>
+        <a href="https://wa.me/62895603290359" class="btn btn-primary" style="background: white; color: black; margin-top: 30px; box-shadow: none;">GET STARTED NOW</a>
+    </section>
+
+    <footer>
+        <p>&copy; 2024 FIO Official Team. Developed for Professional Gaming.</p>
+    </footer>
+
+    <script>
+        window.onload = () => { document.getElementById('loader').style.display = 'none'; };
+
+        function showFullImage(src) {
+            const overlay = document.getElementById('fullscreen-overlay');
+            const img = document.getElementById('fullscreen-img');
+            const spinner = document.getElementById('img-spinner');
+            
+            overlay.style.display = 'flex';
+            spinner.style.display = 'block';
+            img.style.display = 'none';
+            
+            img.src = src;
+            img.onload = () => {
+                spinner.style.display = 'none';
+                img.style.display = 'block';
+                setTimeout(() => overlay.classList.add('active'), 10);
+            };
+        }
+
+        function closeFull() {
+            const overlay = document.getElementById('fullscreen-overlay');
+            overlay.classList.remove('active');
+            setTimeout(() => overlay.style.display = 'none', 400);
+        }
+
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if(window.scrollY > 50) nav.classList.add('scrolled');
+            else nav.classList.remove('scrolled');
+        });
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { 
+                if(entry.isIntersecting) entry.target.classList.add('visible'); 
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('[data-reveal]').forEach(el => observer.observe(el));
+    </script>
+</body>
+</html>
